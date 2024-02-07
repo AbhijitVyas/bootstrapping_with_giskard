@@ -26,7 +26,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 RUN spacy download en_core_web_sm
 
-RUN nltk.downloader punkt && nltk.downloader wordnet
+RUN python -m nltk.downloader punkt && python -m nltk.downloader wordnet
 # -----------------------------------------------------------------------------
 
 # Initiate ROS workspace 

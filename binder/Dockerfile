@@ -18,7 +18,7 @@ RUN pip install --upgrade \
 # -----------------------------------------------------------------------------
 # Initiate BOOTSTRAP workspace 
 ENV BOOT_WS=/home/${NB_USER}/workspace/bootstrap
-WORKDIR ${BOOT_WS}/
+WORKDIR ${BOOT_WS}/src
 COPY --chown=${NB_USER}:users binder/bootstrap ${BOOT_WS}/src/
 
 # install the dependencies and packages in the requirements file

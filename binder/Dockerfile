@@ -15,6 +15,20 @@ RUN pip install --upgrade \
   jupyterlab-language-pack-de-DE  \
   jupyterlab_execute_time
 
+# -----------------------------------------------------------------------------
+# Initiate BOOTSTRAP workspace 
+ENV BOOT_WS=/home/${NB_USER}/workspace/bootstrap
+WORKDIR ${BOOT_WS}/
+COPY --chown=${NB_USER}:users binder/bootstrap ${BOOT_WS}/src/
+
+# install the dependencies and packages in the requirements file
+RUN pip install --no-cache-dir -r requirements.txt
+
+RUN spacy download en_core_web_sm
+
+RUN nltk.downloader punkt && nltk.downloader wordnet
+# -----------------------------------------------------------------------------
+
 # Initiate ROS workspace 
 ENV ROS_WS=/home/${NB_USER}/workspace/ros
 WORKDIR ${ROS_WS}/src

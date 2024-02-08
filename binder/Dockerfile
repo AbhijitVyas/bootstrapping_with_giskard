@@ -28,6 +28,11 @@ RUN spacy download en_core_web_sm
 
 RUN python -m nltk.downloader punkt && python -m nltk.downloader wordnet
 # -----------------------------------------------------------------------------
+# Initiate RASA workspace 
+ENV RASA_WS=/home/${NB_USER}/workspace/rasa
+WORKDIR ${RASA_WS}/src
+COPY --chown=${NB_USER}:users binder/rasa ${RASA_WS}/src/
+# -----------------------------------------------------------------------------
 
 # Initiate ROS workspace 
 ENV ROS_WS=/home/${NB_USER}/workspace/ros

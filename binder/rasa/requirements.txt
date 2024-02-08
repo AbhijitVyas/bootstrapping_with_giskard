@@ -1,4 +1,0 @@
-rasa>=3.6
-spacy>=3.7
-nltk>=3.8
-transformers>=4.36

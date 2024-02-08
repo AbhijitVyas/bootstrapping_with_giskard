@@ -24,9 +24,9 @@ def run_bash_command(command):
     
 if __name__ == '__main__':
 
-    bash_install = "pip install rasa"
-    process = subprocess.run(bash_install, shell=True, capture_output=True, text=True)
-    print("Output:", process.stdout())
+    # bash_install = "pip install rasa"
+    # process = subprocess.run(bash_install, shell=True, capture_output=True, text=True)
+    # print("Output:", process.stdout())
 
     # Define your Bash command
     bash_command = "rasa run --enable-api"

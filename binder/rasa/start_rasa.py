@@ -4,17 +4,17 @@ from threading import Thread
 import subprocess
 import os
 
-dir = os.getcwd()
-newdir = './binder/rasa'
-
-if dir != newdir:
-    try:
-        os.chdir(newdir)
-        print("Changed directory to:", newdir)
-    except FileNotFoundError:
-        print("Directory not found:", newdir)
-else:
-    print("Already in the desired directory:", newdir)
+# dir = os.getcwd()
+# newdir = './binder/rasa'
+#
+# if dir != newdir:
+#     try:
+#         os.chdir(newdir)
+#         print("Changed directory to:", newdir)
+#     except FileNotFoundError:
+#         print("Directory not found:", newdir)
+# else:
+#     print("Already in the desired directory:", newdir)
 
 def run_bash_command(command):
     process = subprocess.run(command, shell=True, capture_output=True, text=True)
@@ -23,6 +23,11 @@ def run_bash_command(command):
         print("Error:", process.stderr)
     
 if __name__ == '__main__':
+
+    bash_install = "pip install rasa"
+    process = subprocess.run(bash_install, shell=True, capture_output=True, text=True)
+    print("Output:", process.stdout())
+
     # Define your Bash command
     bash_command = "rasa run --enable-api"
     

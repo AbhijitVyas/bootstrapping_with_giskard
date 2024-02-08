@@ -113,7 +113,7 @@ WORKDIR ${RASA_WS}/src
 COPY --chown=${NB_USER}:users binder/rasa ${RASA_WS}/src/
 
 # install the dependencies and packages in the requirements file
-RUN pip install --no-cache-dir -r requirements.txt
+# RUN pip install --no-cache-dir -r requirements.txt
 # -----------------------------------------------------------------------------
 
 RUN cd ${ROS_WS}/src/rvizweb && git pull

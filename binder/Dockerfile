@@ -97,12 +97,19 @@ ENV RASA_WS=/home/${NB_USER}/workspace/rasa
 WORKDIR ${RASA_WS}/src
 COPY --chown=${NB_USER}:users binder/rasa ${RASA_WS}/src/
 
+# Add a Python venv and install Rasa
+WORKDIR ${RASA_WS}
+# Create and activate the virtual environment
+RUN python3 -m venv rasaenv
+RUN /bin/bash -c "source ${RASA_WS}/rasaenv/bin/activate"
+RUN pip install --upgrade pip
+RUN pip install rasa
+
+# Deactivate the virtual environment
+RUN /bin/bash -c "deactivate"
+
 # install the dependencies and packages in the requirements file
-RUN pip install --no-cache-dir -r requirements.txt
-
-# RUN spacy download en_core_web_sm
-
-# RUN python -m nltk.downloader punkt && python -m nltk.downloader wordnet
+# RUN pip install --no-cache-dir -r requirements.txt
 # -----------------------------------------------------------------------------
 
 # Copy the giskard tmp meshes to skip the converting step

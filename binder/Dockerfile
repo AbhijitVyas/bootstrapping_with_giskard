@@ -1,31 +1,5 @@
 FROM intel4coro/base-notebook:20.04-noetic-full-xpra
 
-# -----------------------------------------------------------------------------
-# Initiate BOOTSTRAP workspace 
-ENV BOOT_WS=/home/${NB_USER}/workspace/bootstrap
-WORKDIR ${BOOT_WS}/src
-COPY --chown=${NB_USER}:users binder/bootstrap ${BOOT_WS}/src/
-
-# install the dependencies and packages in the requirements file
-RUN pip install --no-cache-dir -r requirements.txt
-
-RUN spacy download en_core_web_sm
-
-RUN python -m nltk.downloader punkt && python -m nltk.downloader wordnet
-# -----------------------------------------------------------------------------
-# Initiate RASA workspace 
-ENV RASA_WS=/home/${NB_USER}/workspace/rasa
-WORKDIR ${RASA_WS}/src
-COPY --chown=${NB_USER}:users binder/rasa ${RASA_WS}/src/
-
-# install the dependencies and packages in the requirements file
-# RUN pip install -r requirements.txt
-
-# RUN spacy download en_core_web_sm
-
-# RUN python -m nltk.downloader punkt && python -m nltk.downloader wordnet
-# -----------------------------------------------------------------------------
-
 RUN pip uninstall -y jlab-enhanced-cell-toolbar
 RUN pip install https://raw.githubusercontent.com/yxzhan/jupyterlab-rviz/master/dist/jupyterlab_rviz-0.3.2.tar.gz \
   https://raw.githubusercontent.com/yxzhan/extension-examples/main/cell-toolbar/dist/jupyterlab_examples_cell_toolbar-0.1.4.tar.gz
@@ -104,6 +78,32 @@ RUN pip install --upgrade \
 COPY --chown=${NB_USER}:users binder/jupyter-ai.json /home/${NB_USER}/.local/share/jupyter/jupyter_ai/config.json
 ENV OPENAI_API_BASE="http://192.168.240.1:5002"
 ENV OPENAI_API_KEY="sk-4e6e40294b4da6fd87ddc0a4aae645a4"
+
+# -----------------------------------------------------------------------------
+# Initiate BOOTSTRAP workspace 
+ENV BOOT_WS=/home/${NB_USER}/workspace/bootstrap
+WORKDIR ${BOOT_WS}/src
+COPY --chown=${NB_USER}:users binder/bootstrap ${BOOT_WS}/src/
+
+# install the dependencies and packages in the requirements file
+RUN pip install --no-cache-dir -r requirements.txt
+
+RUN spacy download en_core_web_sm
+
+RUN python -m nltk.downloader punkt && python -m nltk.downloader wordnet
+# -----------------------------------------------------------------------------
+# Initiate RASA workspace 
+ENV RASA_WS=/home/${NB_USER}/workspace/rasa
+WORKDIR ${RASA_WS}/src
+COPY --chown=${NB_USER}:users binder/rasa ${RASA_WS}/src/
+
+# install the dependencies and packages in the requirements file
+RUN pip install --no-cache-dir -r requirements.txt
+
+# RUN spacy download en_core_web_sm
+
+# RUN python -m nltk.downloader punkt && python -m nltk.downloader wordnet
+# -----------------------------------------------------------------------------
 
 # Copy the giskard tmp meshes to skip the converting step
 COPY --chown=${NB_USER}:users binder/giskard_decomposed_obj ${ROS_WS}/src/giskardpy/tmp

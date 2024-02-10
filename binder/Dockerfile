@@ -98,7 +98,7 @@ WORKDIR ${RASA_WS}/src
 COPY --chown=${NB_USER}:users binder/rasa ${RASA_WS}/src/
 
 # Create a new Conda environment based on the environment.yml file
-RUN conda env create --name rasaenvs --file environment.yml
+RUN conda env create --file environment.yml
 
 # install the dependencies and packages in the requirements file
 # RUN pip install --no-cache-dir -r requirements.txt

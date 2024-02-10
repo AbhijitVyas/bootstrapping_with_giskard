@@ -2,4 +2,7 @@ name: rasaenvs
 channels:
   - defaults
 dependencies:
-  - rasa
+  - python=3.9
+  - pip
+  - pip:
+    - rasa

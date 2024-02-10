@@ -96,7 +96,7 @@ RUN python -m nltk.downloader punkt && python -m nltk.downloader wordnet
 ENV RASA_WS=/home/${NB_USER}/workspace/rasa
 WORKDIR ${RASA_WS}/src
 COPY --chown=${NB_USER}:users binder/rasa ${RASA_WS}/src/
-RUN pip install rasa==3.6.0
+# RUN pip install rasa==3.6.0
 # Create a new Conda environment based on the environment.yml file
 # RUN conda env create --file environment.yml
 

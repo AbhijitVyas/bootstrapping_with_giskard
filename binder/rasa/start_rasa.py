@@ -58,6 +58,7 @@ if __name__ == '__main__':
     
     # Start Flask app in a separate thread
     bash_thread2 = Thread(target=run_bash_command, args=(bash_command,))
+    bash_thread2.daemon = True
     bash_thread2.start()
     
     while True:

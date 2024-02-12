@@ -46,7 +46,8 @@ def handle_submit(sender):
         print("Instruction Info: ", RASA_parse)
     
 # Create a text input widget
-text = widgets.Text(description="Enter NL Instruction:")
+text = widgets.Text(description="Enter NL Instruction:", layout=widgets.Layout(width='400px'))
+text.style.description_width = 'auto'
 
 # Create a button widget
 button = widgets.Button(description="Submit")

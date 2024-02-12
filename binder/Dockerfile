@@ -1,6 +1,6 @@
 FROM intel4coro/base-notebook:20.04-noetic-full-xpra
 
-RUN pip install rasa==3.6.16
+# RUN pip install rasa==3.6.16
 
 RUN pip uninstall -y jlab-enhanced-cell-toolbar
 RUN pip install https://raw.githubusercontent.com/yxzhan/jupyterlab-rviz/master/dist/jupyterlab_rviz-0.3.2.tar.gz \

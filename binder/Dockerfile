@@ -1,7 +1,5 @@
 FROM intel4coro/base-notebook:20.04-noetic-full-xpra
 
-# RUN pip install rasa==3.6.16
-
 RUN pip uninstall -y jlab-enhanced-cell-toolbar
 RUN pip install https://raw.githubusercontent.com/yxzhan/jupyterlab-rviz/master/dist/jupyterlab_rviz-0.3.2.tar.gz \
   https://raw.githubusercontent.com/yxzhan/extension-examples/main/cell-toolbar/dist/jupyterlab_examples_cell_toolbar-0.1.4.tar.gz
@@ -104,6 +102,8 @@ COPY --chown=${NB_USER}:users binder/rasa ${RASA_WS}/src/
 
 # install the dependencies and packages in the requirements file
 # RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install pipenv
+RUN pipenv install rasa==3.6.16
 # -----------------------------------------------------------------------------
 
 # Copy the giskard tmp meshes to skip the converting step

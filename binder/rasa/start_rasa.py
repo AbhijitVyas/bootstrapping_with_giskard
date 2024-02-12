@@ -7,10 +7,11 @@ flag = True
 insFlag = True
 
 def run_pip_install():
+    global insFlag
+    
     try:
         import rasa
         print("RASA imported")
-        global insFlag
         insFlag = False
     except ImportError:
         print("RASA package not available")
@@ -21,8 +22,7 @@ def run_pip_install():
         for line in iter(process.stdout.readline, ''):
             print(line, end='')
         import rasa
-        print("RASA installed and imported")
-        global insFlag
+        print("RASA installed and imported")       
         insFlag = False
     
 def run_bash_command(command):

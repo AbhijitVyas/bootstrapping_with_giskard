@@ -12,16 +12,22 @@ out = widgets.Output()
 
 # Define a function that will be called when the button is clicked
 def handle_submit(sender):
+    out.clear_output()
     with out:
-        print("User input:", text.value)
+        print("You Entered:", text.value)
     preoutput = preprocessing(text.value)
 
-    payload = {"sender": "Rasa", "text": text.value}
-    headers = {'content-type': 'application/json'}
-    response = requests.post('http://localhost:5005/model/parse', json=payload, headers=headers)
-    rasa_output = response.json()
+    try:
+        payload = {"sender": "Rasa", "text": text.value}
+        headers = {'content-type': 'application/json'}
+        response = requests.post('http://localhost:5005/model/parse', json=payload, headers=headers)
+        rasa_output = response.json()
+    except:
+        with out:
+            print('RASA Connection Failed !!! Try Restarting RASA Server')
+            return
+        
     intents = rasa_output['intent']['name']
-
     final = postprocess(rasa_output,preoutput)
 
     output = final.print_params()
@@ -37,10 +43,10 @@ def handle_submit(sender):
     RASA_parse['goal'] = output['goal']
 
     with out:
-        print("final output: ", RASA_parse)
+        print("Instruction Info: ", RASA_parse)
     
 # Create a text input widget
-text = widgets.Text(description="Enter text:")
+text = widgets.Text(description="Enter NL Instruction:")
 
 # Create a button widget
 button = widgets.Button(description="Submit")
@@ -51,6 +57,4 @@ button.on_click(handle_submit)
 # Display the widgets
 display(text)
 display(button)
-with out:
-    print('working')
 display(out)

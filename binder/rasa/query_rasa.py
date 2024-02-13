@@ -26,6 +26,8 @@ def handle_submit(sender):
         with out:
             print('RASA Connection Failed !!! Try Restarting RASA Server')
             return
+    
+    text.value = ""
         
     intents = rasa_output['intent']['name']
     final = postprocess(rasa_output,preoutput)

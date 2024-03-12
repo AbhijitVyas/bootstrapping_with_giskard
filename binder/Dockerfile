@@ -29,6 +29,14 @@ COPY --chown=${NB_USER}:users binder/noetic.rosinstall /home/${NB_USER}/noetic.r
 RUN vcs import --input /home/${NB_USER}/noetic.rosinstall --recursive
 
 # Install dependencies
+WORKDIR ${ROS_WS}/src
+# Clone repos with ssh url in .gitmodules
+RUN git clone https://github.com/maltehue/mujoco_robots.git \
+  && cd mujoco_robots \
+  && perl -i -p -e 's|git@(.*?):|https://\1/|g' .gitmodules \
+  && git submodule sync \
+  && git submodule update --init --recursive \
+
 WORKDIR  ${ROS_WS}
 USER root
 RUN rosdep update && apt update && apt dist-upgrade -y \

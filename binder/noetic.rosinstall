@@ -51,10 +51,6 @@ repositories:
     type: git
     url: https://github.com/SemRoCo/giskardpy.git
     version: v0.6.0
- mujoco_robots:
-    type: git
-    url: https://github.com/maltehue/mujoco_robots.git
-    version: master
   giskard_msgs:
     type: git
     url: https://github.com/SemRoCo/giskard_msgs.git

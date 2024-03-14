@@ -93,6 +93,26 @@ def grasp(giskard: GiskardWrapper, object_name: str, robot_eeff: str, grasp_side
     closeGripper(giskard)
     giskard.execute()
 
+def pick_up(giskard:  GiskardWrapper, object_name: str, robot_eeff: str, grasp_side: str, upright_axis: str, second_axis: str):
+
+    # first make an attempt at grasping an object
+    grasp(giskard, object_name, robot_eeff, grasp_side, upright_axis, second_axis)
+
+    # now, move it upward
+    upright_axis = Vector3Stamped()
+    upright_axis.header.frame_id = robot_eeff
+    upright_axis.vector.z = 1
+
+    # A second axis of the eeff. Can be aligned to the x-axis of goal objects
+    second_axis = Vector3Stamped()
+    second_axis.header.frame_id = robot_eeff
+    second_axis.vector.x = 1
+    align_to(giskard, grasp_side, axis_align_to_z=upright_axis, object_frame=robot_eeff, control_frame=robot_eeff,
+             axis_align_to_x=second_axis, distance=0, height_offset=0.1)
+    giskard.execute()
+
+
+
 # if __name__ == '__main__':
 #     # Before running this script make sure to start a giskard instance using 'roslaunch giskardpy giskardpy_hsr_mujoco.launch'
 #     # And before that the mujoco simulation has to be running

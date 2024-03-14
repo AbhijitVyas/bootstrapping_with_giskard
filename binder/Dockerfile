@@ -107,7 +107,7 @@ COPY --chown=${NB_USER}:users binder/rasa ${RASA_WS}/src/
 # RUN conda env create --file environment.yml
 
 # install the dependencies and packages in the requirements file
-RUN pip install --no-cache-dir --ignore-dependencies -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 # RUN pip install pipenv
 # RUN pipenv install rasa==3.6.16
 # -----------------------------------------------------------------------------

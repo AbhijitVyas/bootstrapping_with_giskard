@@ -81,9 +81,9 @@ RUN pip install --upgrade \
   jupyter-ai
 
 # Chatbot configs
-COPY --chown=${NB_USER}:users binder/jupyter-ai.json /home/${NB_USER}/.local/share/jupyter/jupyter_ai/config.json
-ENV OPENAI_API_BASE="http://192.168.240.1:5002"
-ENV OPENAI_API_KEY="sk-4e6e40294b4da6fd87ddc0a4aae645a4"
+# COPY --chown=${NB_USER}:users binder/jupyter-ai.json /home/${NB_USER}/.local/share/jupyter/jupyter_ai/config.json
+# ENV OPENAI_API_BASE="http://192.168.240.1:5002"
+# ENV OPENAI_API_KEY="sk-4e6e40294b4da6fd87ddc0a4aae645a4"
 
 # -----------------------------------------------------------------------------
 # Initiate BOOTSTRAP workspace 

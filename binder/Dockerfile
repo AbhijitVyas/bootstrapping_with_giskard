@@ -215,4 +215,4 @@ COPY --chown=${NB_USER}:users binder/knowrob/run_notebook.sh /home/ros/lectures/
 RUN chmod +x /home/ros/lectures/run_notebook.sh
 COPY --chown=${NB_USER}:users binder/knowrob/knowrob_cloud /home/ros/src/knowrob_cloud
 
-WORKDIR ${RASA_WS}/src
+WORKDIR /home/${NB_USER}/giskard_examples

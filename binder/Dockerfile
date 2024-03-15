@@ -140,11 +140,11 @@ RUN cd ${ROS_WS}/src/mujoco_robots && git pull
 
 SHELL ["/bin/bash", "-c"]
 
-RUN sudo apt update --fix-missing
+RUN apt update --fix-missing
 
-RUN sudo apt install -y git m4 wget
+RUN apt install -y git m4 wget
 
-RUN sudo apt install -y python3-catkin-pkg-modules python3-rospkg-modules libffi-dev
+RUN apt install -y python3-catkin-pkg-modules python3-rospkg-modules libffi-dev
 
 RUN pip3 install jupyter
 RUN pip3 install jupyterlab
@@ -153,8 +153,8 @@ RUN pip3 install jupyterlab
 WORKDIR /home/ros
 RUN git clone https://github.com/RoboStack/jupyter-ros.git
 WORKDIR /home/ros/jupyter-ros
-RUN sudo apt update
-RUN sudo apt install -y nodejs npm
+RUN apt update
+RUN apt install -y nodejs npm
 RUN pip3 install -e .
 RUN pip3 install numpy --upgrade
 RUN jupyter nbextension install --py --symlink --sys-prefix jupyros

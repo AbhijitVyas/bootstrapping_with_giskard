@@ -154,27 +154,30 @@ USER ${NB_USER}
 ENV PYTHONPATH=/opt/ros/noetic/lib/python3/dist-packages:/home/ros/devel/lib/python3/dist-packages:$PYTHONPATH
 RUN pip3 install jupyter
 RUN pip3 install jupyterlab
+RUN pip3 install -e .
+RUN pip3 install numpy --upgrade
+# Install jupyter-zethus
+RUN python3 -m pip install jupyterlab-zethus
 
+USER root
 # Install jupyter-ros
 WORKDIR /home/ros
 RUN git clone https://github.com/RoboStack/jupyter-ros.git
 WORKDIR /home/ros/jupyter-ros
 RUN apt update
 RUN apt install -y nodejs npm
-RUN pip3 install -e .
-RUN pip3 install numpy --upgrade
 RUN jupyter nbextension install --py --symlink --sys-prefix jupyros
 RUN jupyter nbextension enable --py --sys-prefix jupyros
 
-# Install jupyter-zethus
-RUN python3 -m pip install jupyterlab-zethus
 
+USER ${NB_USER}
 # Install Knowrob kernel 
 RUN pip3 install git+https://github.com/sasjonge/jupyter-knowrob.git
 WORKDIR ~/.local/share/jupyter/kernels/
 RUN mkdir jknowrob
 RUN wget https://raw.githubusercontent.com/sasjonge/jupyter-knowrob/master/kernel.json -P ~/.local/share/jupyter/kernels/jknowrob
 
+USER root
 # We need the json_prolog_msgs to communicate with KnowRob
 WORKDIR /home/ros/src
 RUN /usr/bin/python /opt/ros/noetic/bin/catkin_init_workspace
@@ -189,5 +192,5 @@ RUN /opt/ros/noetic/bin/catkin_make -DPYTHON_EXECUTABLE=/usr/bin/python3
 WORKDIR /lectures
 
 # Configure container startup
-COPY /knowrob/run_notebook.sh /run_notebook.sh
-COPY /knowrob/knowrob_cloud /home/ros/src/knowrob_cloud
+COPY --chown=${NB_USER}:users /knowrob/run_notebook.sh /run_notebook.sh
+COPY --chown=${NB_USER}:users /knowrob/knowrob_cloud /home/ros/src/knowrob_cloud

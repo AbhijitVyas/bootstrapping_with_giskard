@@ -140,7 +140,7 @@ RUN cd ${ROS_WS}/src/mujoco_robots && git pull
 
 SHELL ["/bin/bash", "-c"]
 
-RUN apt update --fix-missing
+# RUN apt update --fix-missing
 
 RUN apt install -y git m4 wget
 

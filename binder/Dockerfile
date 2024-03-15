@@ -13,10 +13,10 @@ RUN apt-get update -y && apt-get upgrade -y
 RUN apt-get install -y software-properties-common
 RUN add-apt-repository ppa:deadsnakes/ppa
 RUN apt-get install -y python3.8 python3-pip
+RUN apt install python3.8-venv
 
 USER ${NB_USER}
 WORKDIR /rasaenv
-RUN python3.8 -m pip install virtualenv
 RUN python3.8 -m venv venv
 # ENV PATH=/rasaenv/venv/bin:$PATH
 RUN python3.8 -m pip install rasa

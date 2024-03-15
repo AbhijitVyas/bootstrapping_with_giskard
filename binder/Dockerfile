@@ -163,12 +163,12 @@ RUN git clone https://github.com/RoboStack/jupyter-ros.git
 WORKDIR /home/ros/jupyter-ros
 RUN apt update
 RUN apt install -y nodejs npm
-USER ${NB_USER}
 RUN pip3 install -e .
 RUN pip3 install numpy --upgrade
 RUN jupyter nbextension install --py --symlink --sys-prefix jupyros
 RUN jupyter nbextension enable --py --sys-prefix jupyros
 
+USER ${NB_USER}
 # Install jupyter-zethus
 RUN python3 -m pip install jupyterlab-zethus
 

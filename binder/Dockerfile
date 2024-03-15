@@ -18,9 +18,9 @@ RUN apt install python3.8-venv
 USER ${NB_USER}
 WORKDIR /rasaenv
 RUN python3.8 -m venv venv
-# ENV PATH=/rasaenv/venv/bin:$PATH
-RUN python3.8 -m pip install rasa
-# RUN unset PATH
+ENV PATH=/rasaenv/venv/bin:$PATH
+RUN /bin/bash -c "source venv/bin/activate && pip install rasa && deactivate"
+RUN unset PATH
 
 FROM intel4coro/base-notebook:20.04-noetic-full-xpra as stage2
 

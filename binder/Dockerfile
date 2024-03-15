@@ -1,7 +1,7 @@
 FROM python:3.8 AS stage1
 WORKDIR /rasaenv
 RUN pip install virtualenv
-RUN python -m venv venv
+RUN python3.8 -m venv venv
 ENV PATH=/rasaenv/venv/bin:$PATH
 RUN pip install rasa
 RUN unset PATH
@@ -25,10 +25,6 @@ RUN pip install --upgrade \
   jupyter-ai \
   jupyterlab-language-pack-de-DE  \
   jupyterlab_execute_time
-
-USER root
-RUN apt update && apt install -y ffmpeg
-USER ${NB_USER}
 
 # Initiate ROS workspace 
 ENV ROS_WS=/home/${NB_USER}/workspace/ros
@@ -115,8 +111,6 @@ ENV RASA_WS=/home/${NB_USER}/workspace/rasa
 WORKDIR ${RASA_WS}/src
 COPY --chown=${NB_USER}:users binder/rasa ${RASA_WS}/src/
 # RUN pip install rasa==3.6.0
-# Create a new Conda environment based on the environment.yml file
-# RUN conda env create --file environment.yml
 
 # install the dependencies and packages in the requirements file
 # RUN pip install --no-cache-dir -r requirements.txt

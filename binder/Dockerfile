@@ -17,7 +17,7 @@ FROM ubuntu:20.04 AS stage1
 
 USER ${NB_USER}
 WORKDIR /rasaenv
-RUN conda create -n myenv python=3.
+RUN conda create -n myenv python=3.8
 SHELL ["conda", "run", "-n", "myenv", "/bin/bash", "-c"]
 RUN conda install -n myenv pip
 RUN pip install rasa

@@ -1,4 +1,12 @@
-FROM intel4coro/base-notebook:20.04-noetic-full-xpra
+FROM python:3.8 AS stage1
+WORKDIR /rasaenv
+RUN pip install virtualenv
+RUN python -m venv venv
+ENV PATH=/rasaenv/venv/bin:$PATH
+RUN pip install rasa
+RUN unset PATH
+
+FROM intel4coro/base-notebook:20.04-noetic-full-xpra as stage2
 
 RUN pip uninstall -y jlab-enhanced-cell-toolbar
 RUN pip install https://raw.githubusercontent.com/yxzhan/jupyterlab-rviz/master/dist/jupyterlab_rviz-0.3.2.tar.gz \
@@ -17,6 +25,10 @@ RUN pip install --upgrade \
   jupyter-ai \
   jupyterlab-language-pack-de-DE  \
   jupyterlab_execute_time
+
+USER root
+RUN apt update && apt install -y ffmpeg
+USER ${NB_USER}
 
 # Initiate ROS workspace 
 ENV ROS_WS=/home/${NB_USER}/workspace/ros
@@ -107,9 +119,7 @@ COPY --chown=${NB_USER}:users binder/rasa ${RASA_WS}/src/
 # RUN conda env create --file environment.yml
 
 # install the dependencies and packages in the requirements file
-RUN pip install --no-cache-dir -r requirements.txt
-# RUN pip install pipenv
-# RUN pipenv install rasa==3.6.16
+# RUN pip install --no-cache-dir -r requirements.txt
 # -----------------------------------------------------------------------------
 
 # Copy the giskard tmp meshes to skip the converting step
@@ -126,8 +136,8 @@ RUN ln -s ${ROS_WS} ${PWD}/ROS_WS
 COPY --chown=${NB_USER}:users binder/webapps.json ${ROS_WS}/src/rvizweb/webapps/app.json
 COPY --chown=${NB_USER}:users binder/jupyter-settings.json /opt/conda/share/jupyter/lab/settings/overrides.json
 COPY --chown=${NB_USER}:users binder/entrypoint.sh /
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["start-notebook.sh"]
+# ENTRYPOINT ["/entrypoint.sh"]
+# CMD ["start-notebook.sh"]
 
 
 RUN cd ${ROS_WS}/src/rvizweb && git pull
@@ -138,61 +148,71 @@ RUN cd ${ROS_WS}/src/mujoco_robots && git pull
 
 # -------------------------------------------------------
 
-# USER root
+SHELL ["/bin/bash", "-c"] 
 
-# SHELL ["/bin/bash", "-c"]
+USER root
 
-# RUN apt update --fix-missing
+#copy stage 1 files
+WORKDIR /home/rasaenv
 
+COPY --from=stage1 --chown=${NB_USER}:users /rasaenv/venv /home/rasaenv/venv
+
+RUN apt update --fix-missing
+RUN apt install -y git m4 wget
 # RUN apt install -y git m4 python python3-pip wget
+RUN apt install -y python3-catkin-pkg-modules python3-rospkg-modules libffi-dev
+RUN apt update
+RUN apt install -y nodejs npm
 
-# RUN apt install -y python3-catkin-pkg-modules python3-rospkg-modules libffi-dev
+USER ${NB_USER}
+# Install and set path for python dependencies
+ENV PYTHONPATH=/opt/ros/noetic/lib/python3/dist-packages:/home/${NB_USER}/ros/devel/lib/python3/dist-packages:$PYTHONPATH
+RUN pip3 install jupyter
+RUN pip3 install jupyterlab
 
-# USER ${NB_USER}
+USER root
+# Install jupyter-ros
+WORKDIR /home/ros
+RUN git clone https://github.com/RoboStack/jupyter-ros.git
+WORKDIR /home/ros/jupyter-ros
+# RUN sudo apt update
+# RUN sudo apt install -y nodejs npm
+RUN pip3 install -e .
+USER ${NB_USER}
+RUN pip3 install numpy --upgrade
+RUN jupyter nbextension install --py --symlink --sys-prefix jupyros
+RUN jupyter nbextension enable --py --sys-prefix jupyros
 
-# # Install and set path for python dependencies
-# ENV PYTHONPATH=/opt/ros/noetic/lib/python3/dist-packages:/home/ros/devel/lib/python3/dist-packages:$PYTHONPATH
-# RUN pip3 install jupyter
-# RUN pip3 install jupyterlab
+# Install jupyter-zethus
+RUN python3 -m pip install jupyterlab-zethus
 
+# Install Knowrob kernel 
+RUN pip3 install git+https://github.com/sasjonge/jupyter-knowrob.git
+WORKDIR ~/.local/share/jupyter/kernels/
+USER root
+RUN mkdir jknowrob
+USER ${NB_USER}
+RUN wget https://raw.githubusercontent.com/sasjonge/jupyter-knowrob/master/kernel.json -P ~/.local/share/jupyter/kernels/jknowrob
 
-# USER root
-# # Install jupyter-ros
-# WORKDIR /home/ros
-# RUN git clone https://github.com/RoboStack/jupyter-ros.git
-# WORKDIR /home/ros/jupyter-ros
-# RUN apt update
-# RUN apt install -y nodejs npm
-# RUN pip3 install -e .
-# RUN pip3 install numpy --upgrade
-# RUN jupyter nbextension install --py --symlink --sys-prefix jupyros
-# RUN jupyter nbextension enable --py --sys-prefix jupyros
+RUN pip3 install --upgrade jupyter-server
 
-# USER ${NB_USER}
-# # Install jupyter-zethus
-# RUN python3 -m pip install jupyterlab-zethus
+# We need the json_prolog_msgs to communicate with KnowRob
+USER root
+WORKDIR /home/ros/src
+RUN /usr/bin/python3 /opt/ros/noetic/bin/catkin_init_workspace
+RUN source /opt/ros/noetic/setup.bash
+RUN git clone https://github.com/code-iai/iai_common_msgs.git
 
-# # Install Knowrob kernel 
-# RUN pip3 install git+https://github.com/sasjonge/jupyter-knowrob.git
-# WORKDIR ~/.local/share/jupyter/kernels/
-# USER root
-# RUN mkdir jknowrob
-# RUN wget https://raw.githubusercontent.com/sasjonge/jupyter-knowrob/master/kernel.json -P ~/.local/share/jupyter/kernels/jknowrob
+WORKDIR /home/ros
+# Build the catkin workspace
+ENV CMAKE_PREFIX_PATH=/home/${NB_USER}/knowrob_ws/devel:/opt/ros/noetic
+RUN /opt/ros/noetic/bin/catkin_make -DPYTHON_EXECUTABLE=/usr/bin/python3
 
+WORKDIR /home/ros/lectures
 
-# # We need the json_prolog_msgs to communicate with KnowRob
-# WORKDIR /home/ros/src
-# RUN /usr/bin/python /opt/ros/noetic/bin/catkin_init_workspace
-# RUN source /opt/ros/noetic/setup.bash
-# RUN git clone https://github.com/code-iai/iai_common_msgs.git
+# Configure container startup
+COPY --chown=${NB_USER}:users binder/knowrob/run_notebook.sh /home/ros/lectures/run_notebook.sh
+RUN chmod +x /home/ros/lectures/run_notebook.sh
+COPY --chown=${NB_USER}:users binder/knowrob/knowrob_cloud /home/ros/src/knowrob_cloud
 
-# WORKDIR /home/ros
-# # Build the catkin workspace
-# ENV CMAKE_PREFIX_PATH=/home/sasjonge/knowrob_ws/devel:/opt/ros/noetic
-# RUN /opt/ros/noetic/bin/catkin_make -DPYTHON_EXECUTABLE=/usr/bin/python3
-
-# WORKDIR /lectures
-
-# # Configure container startup
-# COPY --chown=${NB_USER}:users binder/knowrob/run_notebook.sh /run_notebook.sh
-# COPY --chown=${NB_USER}:users binder/knowrob/knowrob_cloud /home/ros/src/knowrob_cloud
+WORKDIR ${RASA_WS}/src

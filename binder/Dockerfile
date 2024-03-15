@@ -8,12 +8,25 @@
 
 FROM ubuntu:20.04 AS stage1
 USER root
+# Create a new Conda environment
+RUN conda create -n myenv python=3.8
 
-RUN apt-get update -y && apt-get upgrade -y
-RUN apt-get install -y software-properties-common
-RUN add-apt-repository ppa:deadsnakes/ppa
-RUN apt-get install -y python3.8 python3-pip
-RUN apt install python3.8-venv
+# Activate the Conda environment
+SHELL ["conda", "run", "-n", "myenv", "/bin/bash", "-c"]
+
+# Install pip within the Conda environment
+RUN conda install -n myenv pip
+
+# Install pip packages within the Conda environment
+RUN pip install rasa
+
+RUN conda deactivate
+
+# RUN apt-get update -y && apt-get upgrade -y
+# RUN apt-get install -y software-properties-common
+# RUN add-apt-repository ppa:deadsnakes/ppa
+# RUN apt-get install -y python3.8 python3-pip
+# RUN apt install python3.8-venv
 
 USER ${NB_USER}
 WORKDIR /rasaenv

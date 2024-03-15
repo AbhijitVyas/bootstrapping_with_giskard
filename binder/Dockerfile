@@ -136,8 +136,9 @@ RUN pip install --upgrade --force-reinstall flask-sqlalchemy sqlalchemy
 
 RUN cd ${ROS_WS}/src/mujoco_robots && git pull
 
+# -------------------------------------------------------
 
-
+SHELL ["/bin/bash", "-c"]
 
 RUN sudo apt update --fix-missing
 

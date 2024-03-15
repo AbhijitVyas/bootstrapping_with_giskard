@@ -83,10 +83,10 @@ RUN rm -rf src/iai_pr2/iai_pr2_donbot
 RUN cd src/rvizweb && git pull
 RUN catkin build
 
-RUN pip install --upgrade \
-  jupyter-collaboration \
-  openai \
-  jupyter-ai
+# RUN pip install --upgrade \
+#   jupyter-collaboration \
+#   openai \
+#   jupyter-ai
 
 # Chatbot configs
 # COPY --chown=${NB_USER}:users binder/jupyter-ai.json /home/${NB_USER}/.local/share/jupyter/jupyter_ai/config.json
@@ -130,8 +130,8 @@ RUN ln -s ${ROS_WS} ${PWD}/ROS_WS
 COPY --chown=${NB_USER}:users binder/webapps.json ${ROS_WS}/src/rvizweb/webapps/app.json
 COPY --chown=${NB_USER}:users binder/jupyter-settings.json /opt/conda/share/jupyter/lab/settings/overrides.json
 COPY --chown=${NB_USER}:users binder/entrypoint.sh /
-# ENTRYPOINT ["/entrypoint.sh"]
-# CMD ["start-notebook.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["start-notebook.sh"]
 
 
 RUN cd ${ROS_WS}/src/rvizweb && git pull
@@ -161,8 +161,8 @@ RUN apt install -y nodejs npm
 USER ${NB_USER}
 # Install and set path for python dependencies
 ENV PYTHONPATH=/opt/ros/noetic/lib/python3/dist-packages:/home/${NB_USER}/ros/devel/lib/python3/dist-packages:$PYTHONPATH
-RUN pip3 install jupyter
-RUN pip3 install jupyterlab
+# RUN pip3 install jupyter
+# RUN pip3 install jupyterlab
 
 USER root
 # Install jupyter-ros

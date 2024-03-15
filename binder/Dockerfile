@@ -13,12 +13,7 @@ RUN apt-get update -y && apt-get upgrade -y
 RUN apt-get install -y \
     python3.8 \
     python3-pip \
-    python3-dev \
-    build-essential \
-    curl \
-    git \
-    libssl-dev \
-    libffi-dev
+    python3-dev
 
 USER ${NB_USER}
 WORKDIR /rasaenv

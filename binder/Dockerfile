@@ -6,14 +6,13 @@
 # RUN pip install rasa
 # RUN unset PATH
 
-FROM ubuntu:22.04 AS stage1
+FROM ubuntu:20.04 AS stage1
 USER root
 
 RUN apt-get update -y && apt-get upgrade -y
-RUN apt-get install -y \
-    python3.8 \
-    python3-pip \
-    python3-dev
+RUN apt-get install -y software-properties-common
+RUN add-apt-repository ppa:deadsnakes/ppa
+RUN apt-get install -y python3.8 python3-pip
 
 USER ${NB_USER}
 WORKDIR /rasaenv

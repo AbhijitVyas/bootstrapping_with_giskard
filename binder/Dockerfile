@@ -163,12 +163,11 @@ RUN git clone https://github.com/RoboStack/jupyter-ros.git
 WORKDIR /home/ros/jupyter-ros
 RUN apt update
 RUN apt install -y nodejs npm
+USER ${NB_USER}
 RUN pip3 install -e .
 RUN pip3 install numpy --upgrade
 RUN jupyter nbextension install --py --symlink --sys-prefix jupyros
 RUN jupyter nbextension enable --py --sys-prefix jupyros
-
-USER ${NB_USER}
 
 # Install jupyter-zethus
 RUN python3 -m pip install jupyterlab-zethus
@@ -176,10 +175,11 @@ RUN python3 -m pip install jupyterlab-zethus
 # Install Knowrob kernel 
 RUN pip3 install git+https://github.com/sasjonge/jupyter-knowrob.git
 WORKDIR ~/.local/share/jupyter/kernels/
+USER root
 RUN mkdir jknowrob
 RUN wget https://raw.githubusercontent.com/sasjonge/jupyter-knowrob/master/kernel.json -P ~/.local/share/jupyter/kernels/jknowrob
 
-USER root
+
 # We need the json_prolog_msgs to communicate with KnowRob
 WORKDIR /home/ros/src
 RUN /usr/bin/python /opt/ros/noetic/bin/catkin_init_workspace

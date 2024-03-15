@@ -154,10 +154,7 @@ USER ${NB_USER}
 ENV PYTHONPATH=/opt/ros/noetic/lib/python3/dist-packages:/home/ros/devel/lib/python3/dist-packages:$PYTHONPATH
 RUN pip3 install jupyter
 RUN pip3 install jupyterlab
-RUN pip3 install -e .
-RUN pip3 install numpy --upgrade
-# Install jupyter-zethus
-RUN python3 -m pip install jupyterlab-zethus
+
 
 USER root
 # Install jupyter-ros
@@ -166,11 +163,16 @@ RUN git clone https://github.com/RoboStack/jupyter-ros.git
 WORKDIR /home/ros/jupyter-ros
 RUN apt update
 RUN apt install -y nodejs npm
+RUN pip3 install -e .
+RUN pip3 install numpy --upgrade
 RUN jupyter nbextension install --py --symlink --sys-prefix jupyros
 RUN jupyter nbextension enable --py --sys-prefix jupyros
 
-
 USER ${NB_USER}
+
+# Install jupyter-zethus
+RUN python3 -m pip install jupyterlab-zethus
+
 # Install Knowrob kernel 
 RUN pip3 install git+https://github.com/sasjonge/jupyter-knowrob.git
 WORKDIR ~/.local/share/jupyter/kernels/

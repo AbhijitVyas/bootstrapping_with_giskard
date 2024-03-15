@@ -8,25 +8,19 @@
 
 FROM ubuntu:20.04 AS stage1
 
-# USER root
-# RUN apt-get update -y && apt-get upgrade -y
-# RUN apt-get install -y software-properties-common
-# RUN add-apt-repository ppa:deadsnakes/ppa
-# RUN apt-get install -y python3.8 python3-pip
-# RUN apt install python3.8-venv
+USER root
+RUN apt-get update -y && apt-get upgrade -y
+RUN apt-get install -y software-properties-common
+RUN add-apt-repository ppa:deadsnakes/ppa
+RUN apt-get install -y python3.8 python3-pip
+RUN apt install python3.8-venv
 
 USER ${NB_USER}
 WORKDIR /rasaenv
-RUN conda create -n myenv python=3.8
-SHELL ["conda", "run", "-n", "myenv", "/bin/bash", "-c"]
-RUN conda install -n myenv pip
-RUN pip install rasa
-RUN conda deactivate
-
-# RUN python3.8 -m venv venv
-# ENV PATH=/rasaenv/venv/bin:$PATH
-# RUN /bin/bash -c "source venv/bin/activate && pip install rasa && deactivate"
-# RUN unset PATH
+RUN python3.8 -m venv venv
+ENV PATH=/rasaenv/venv/bin:$PATH
+RUN /bin/bash -c "source venv/bin/activate && deactivate"
+RUN unset PATH
 
 FROM intel4coro/base-notebook:20.04-noetic-full-xpra as stage2
 

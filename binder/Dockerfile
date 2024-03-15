@@ -142,19 +142,23 @@ USER root
 
 SHELL ["/bin/bash", "-c"]
 
-# RUN apt update --fix-missing
+RUN apt update --fix-missing
 
-RUN apt install -y git m4 wget
+RUN apt install -y git m4 python python3-pip wget
 
 RUN apt install -y python3-catkin-pkg-modules python3-rospkg-modules libffi-dev
 
+USER ${NB_USER}
+
+# Install and set path for python dependencies
+ENV PYTHONPATH=/opt/ros/noetic/lib/python3/dist-packages:/home/ros/devel/lib/python3/dist-packages:$PYTHONPATH
 RUN pip3 install jupyter
 RUN pip3 install jupyterlab
 
 # Install jupyter-ros
-WORKDIR /home/ros
+WORKDIR /home/${NB_USER}/ros
 RUN git clone https://github.com/RoboStack/jupyter-ros.git
-WORKDIR /home/ros/jupyter-ros
+WORKDIR /home/${NB_USER}/ros/jupyter-ros
 RUN apt update
 RUN apt install -y nodejs npm
 RUN pip3 install -e .
@@ -172,12 +176,12 @@ RUN mkdir jknowrob
 RUN wget https://raw.githubusercontent.com/sasjonge/jupyter-knowrob/master/kernel.json -P ~/.local/share/jupyter/kernels/jknowrob
 
 # We need the json_prolog_msgs to communicate with KnowRob
-WORKDIR /home/ros/src
+WORKDIR /home/${NB_USER}/ros/src
 RUN /usr/bin/python /opt/ros/noetic/bin/catkin_init_workspace
 RUN source /opt/ros/noetic/setup.bash
 RUN git clone https://github.com/code-iai/iai_common_msgs.git
 
-WORKDIR /home/ros
+WORKDIR /home/${NB_USER}/ros
 # Build the catkin workspace
 ENV CMAKE_PREFIX_PATH=/home/sasjonge/knowrob_ws/devel:/opt/ros/noetic
 RUN /opt/ros/noetic/bin/catkin_make -DPYTHON_EXECUTABLE=/usr/bin/python3
@@ -186,4 +190,4 @@ WORKDIR /lectures
 
 # Configure container startup
 COPY /knowrob/run_notebook.sh /run_notebook.sh
-COPY /knowrob/knowrob_cloud /home/ros/src/knowrob_cloud
+COPY /knowrob/knowrob_cloud /home/${NB_USER}/ros/src/knowrob_cloud

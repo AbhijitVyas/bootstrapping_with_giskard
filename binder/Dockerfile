@@ -225,4 +225,4 @@ RUN pip install --upgrade \
   jupyterlab-language-pack-de-DE  \
   jupyterlab_execute_time
 
-# WORKDIR /home/${NB_USER}/giskard_examples
+WORKDIR /home/${NB_USER}/giskard_examples

@@ -138,6 +138,8 @@ RUN cd ${ROS_WS}/src/mujoco_robots && git pull
 
 # -------------------------------------------------------
 
+USER root
+
 SHELL ["/bin/bash", "-c"]
 
 # RUN apt update --fix-missing

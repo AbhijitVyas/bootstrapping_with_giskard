@@ -1,30 +1,17 @@
-# FROM python:3.8 AS stage1
-# WORKDIR /rasaenv
-# RUN pip install virtualenv
-# RUN python3.8 -m venv venv
-# ENV PATH=/rasaenv/venv/bin:$PATH
-# RUN pip install rasa
-# RUN unset PATH
-
-FROM ubuntu:20.04 AS stage1
-
-USER root
-RUN apt-get update -y && apt-get upgrade -y
-RUN apt-get install -y software-properties-common
-RUN add-apt-repository ppa:deadsnakes/ppa
-RUN apt-get install -y python3.8 python3-pip
-RUN apt install python3.8-venv
-
-USER ${NB_USER}
-WORKDIR /rasaenv
-RUN python3.8 -m venv venv
-ENV PATH=/rasaenv/venv/bin:$PATH
-RUN /bin/bash -c "source venv/bin/activate && deactivate"
-RUN unset PATH
-
-FROM intel4coro/base-notebook:20.04-noetic-full-xpra as stage2
+FROM intel4coro/base-notebook:20.04-noetic-full-xpra
 
 #-------------------------------------------------------------------------------------------------------------------------------------------
+USER root
+
+RUN conda create -n rasa38 python=3.8
+
+SHELL ["conda", "run", "-n", "rasa38", "/bin/bash", "-c"]
+
+RUN pip install rasa
+
+RUN conda deactivate
+
+USER ${NB_USER}
 
 RUN pip uninstall -y jlab-enhanced-cell-toolbar
 RUN pip install https://raw.githubusercontent.com/yxzhan/jupyterlab-rviz/master/dist/jupyterlab_rviz-0.3.2.tar.gz \
@@ -165,9 +152,9 @@ SHELL ["/bin/bash", "-c"]
 USER root
 
 #copy stage 1 files
-WORKDIR /home/rasaenv
+# WORKDIR /home/rasaenv
 
-COPY --from=stage1 --chown=${NB_USER}:users /rasaenv/venv /home/rasaenv/venv
+# COPY --from=stage1 --chown=${NB_USER}:users /rasaenv/venv /home/rasaenv/venv
 
 RUN apt update --fix-missing
 RUN apt install -y git m4 wget

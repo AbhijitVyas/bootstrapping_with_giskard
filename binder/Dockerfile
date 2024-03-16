@@ -1,5 +1,7 @@
 FROM intel4coro/base-notebook:20.04-noetic-full-xpra
 
+RUN python --version
+
 #-------------------------------------------------------------------------------------------------------------------------------------------
 USER root
 
@@ -10,11 +12,13 @@ SHELL ["conda", "run", "-n", "rasa38", "/bin/bash", "-c"]
 
 RUN python --version
 
-RUN pip install rasa
+RUN pip install rasa && pip install spacy && pip install transformers
 
 # SHELL ["/bin/bash", "-c", "source ~/.bashrc && conda deactivate"]
 
 SHELL ["conda", "run", "-n", "base", "/bin/bash", "-c"]
+
+RUN python --version
 
 USER ${NB_USER}
 
@@ -140,8 +144,8 @@ RUN ln -s ${ROS_WS} ${PWD}/ROS_WS
 COPY --chown=${NB_USER}:users binder/webapps.json ${ROS_WS}/src/rvizweb/webapps/app.json
 COPY --chown=${NB_USER}:users binder/jupyter-settings.json /opt/conda/share/jupyter/lab/settings/overrides.json
 COPY --chown=${NB_USER}:users binder/entrypoint.sh /
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["start-notebook.sh"]
+# ENTRYPOINT ["/entrypoint.sh"]
+# CMD ["start-notebook.sh"]
 
 
 RUN cd ${ROS_WS}/src/rvizweb && git pull
@@ -234,3 +238,4 @@ RUN pip install --upgrade \
   jupyterlab_execute_time
 
 WORKDIR /home/${NB_USER}/giskard_examples
+CMD ["conda", "run", "-n", "base", "python"]

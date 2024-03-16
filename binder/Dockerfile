@@ -3,13 +3,16 @@ FROM intel4coro/base-notebook:20.04-noetic-full-xpra
 #-------------------------------------------------------------------------------------------------------------------------------------------
 USER root
 
-RUN conda create -n rasa38 python=3.8
+RUN conda create -n rasa38 python=3.8 && echo "conda activate rasa38" >> ~/.bashrc
 
-SHELL ["conda", "run", "-n", "rasa38", "/bin/bash", "-c"]
+# SHELL ["conda", "run", "-n", "rasa38", "/bin/bash", "-c"]
+SHELL ["/bin/bash", "-c", "source ~/.bashrc && conda activate rasa38"]
+
+RUN python --version
 
 RUN pip install rasa
 
-RUN deactivate
+SHELL ["/bin/bash", "-c", "source ~/.bashrc && conda deactivate"]
 
 USER ${NB_USER}
 

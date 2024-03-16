@@ -9,7 +9,7 @@ SHELL ["conda", "run", "-n", "rasa38", "/bin/bash", "-c"]
 
 RUN pip install rasa
 
-RUN conda deactivate
+RUN deactivate
 
 USER ${NB_USER}
 

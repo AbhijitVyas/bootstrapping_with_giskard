@@ -5,14 +5,16 @@ USER root
 
 RUN conda create -n rasa38 python=3.8 && echo "conda activate rasa38" >> ~/.bashrc
 
-# SHELL ["conda", "run", "-n", "rasa38", "/bin/bash", "-c"]
-SHELL ["/bin/bash", "-c", "source ~/.bashrc && conda activate rasa38"]
+SHELL ["conda", "run", "-n", "rasa38", "/bin/bash", "-c"]
+# SHELL ["/bin/bash", "-c", "source ~/.bashrc && conda activate rasa38"]
 
 RUN python --version
 
 RUN pip install rasa
 
-SHELL ["/bin/bash", "-c", "source ~/.bashrc && conda deactivate"]
+# SHELL ["/bin/bash", "-c", "source ~/.bashrc && conda deactivate"]
+
+SHELL ["conda", "run", "-n", "base", "/bin/bash", "-c"]
 
 USER ${NB_USER}
 
